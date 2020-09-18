@@ -5,4 +5,4 @@ test -f ./.env && . ./.env
 set +a
 
 #go run main.go
-bigfileuploader >> server.log&
+./bigfileuploader >> server.log&

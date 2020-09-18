@@ -2,49 +2,50 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
-	"strings"
-	"html/template"
-	"strconv"
 	"os"
+	"strconv"
+	"strings"
 )
 
 var (
-	GBYTE int64 = 1073741824
-	APP_NAME string
-	MAXGB_FILESIZE string
-	DIR_SEPARATOR string
-	HTTP_ENDPOINT string
-	SECRET_LINK  string
+	GBYTE            int64 = 1073741824 // 1GB in bytes
+	APP_NAME         string
+	MAXGB_FILESIZE   string
+	DIR_SEPARATOR    string
+	HTTP_ENDPOINT    string
+	SECRET_LINK      string
 	UPLOAD_DIRECTORY string
-	TMPDIR string
+	TMPDIR           string
 )
 
 type PageData struct {
-    Title string
-    SecretLink string
+	Title      string
+	SecretLink string
 }
 
 func init() {
 
 	APP_NAME = os.Getenv("APP_NAME")
-    if APP_NAME == "" {
+	if APP_NAME == "" {
 		APP_NAME = "Big file Uploader"
 	}
+	// fmt.Println("INIT GET:APP_NAME:",APP_NAME)
 	MAXGB_FILESIZE = os.Getenv("MAXGB_FILESIZE")
-    if MAXGB_FILESIZE == "" {
+	if MAXGB_FILESIZE == "" {
 		MAXGB_FILESIZE = "1"
 	}
 	// fmt.Println("INIT GET:HTTP_ENDPOINT:",HTTP_ENDPOINT)
 	DIR_SEPARATOR = os.Getenv("DIR_SEPARATOR")
-    if DIR_SEPARATOR == "" {
+	if DIR_SEPARATOR == "" {
 		DIR_SEPARATOR = "/"
 	}
 	HTTP_ENDPOINT = os.Getenv("HTTP_ENDPOINT")
 	// fmt.Println("INIT GET:HTTP_ENDPOINT:",HTTP_ENDPOINT)
-    if HTTP_ENDPOINT == "" {
+	if HTTP_ENDPOINT == "" {
 		HTTP_ENDPOINT = "127.0.0.1:3000"
 	}
 	SECRET_LINK = os.Getenv("SECRET_LINK")
@@ -71,10 +72,10 @@ func main() {
 	http.HandleFunc("/", defaultHandler)
 	http.HandleFunc("/favicon.ico", faviconHandler)
 	http.HandleFunc(SECRET_LINK, indexHandler)
-	http.HandleFunc(SECRET_LINK + "upload", uploadHandler)
+	http.HandleFunc(SECRET_LINK+"upload", uploadHandler)
 
 	s := &http.Server{
-		Addr: HTTP_ENDPOINT,
+		Addr:           HTTP_ENDPOINT,
 		MaxHeaderBytes: 1 << 20,
 	}
 	log.Fatal(s.ListenAndServe())
@@ -92,9 +93,9 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	pd := PageData{
-        Title : APP_NAME,
-        SecretLink : SECRET_LINK + "upload",
-    }
+		Title:      APP_NAME,
+		SecretLink: SECRET_LINK + "upload",
+	}
 	tmpl, _ := template.ParseFiles("templates/index.htmlt")
 	tmpl.Execute(w, pd)
 }
@@ -130,8 +131,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	calcMax := GBYTE * max
-fmt.Println("DEBUG:calcMax:", calcMax)
-	// Check file size
+	// Check file size after uploading process
 	if handler.Size > calcMax {
 		http.Error(w, "413 StatusRequestEntityTooLarge", http.StatusRequestEntityTooLarge)
 		return
@@ -145,7 +145,7 @@ fmt.Println("DEBUG:calcMax:", calcMax)
 		DIR_ENDER = "/"
 	}
 	// Create file
-	dst, err := os.Create(UPLOAD_DIRECTORY + DIR_ENDER +  handler.Filename)
+	dst, err := os.Create(UPLOAD_DIRECTORY + DIR_ENDER + handler.Filename)
 	defer dst.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

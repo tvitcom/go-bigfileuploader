@@ -133,7 +133,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	calcMax := GBYTE * max
 	// Check file size after uploading process
 	if handler.Size > calcMax {
-		http.Error(w, "413 StatusRequestEntityTooLarge", http.StatusRequestEntityTooLarge)
+		http.Error(w, "413 StatusRequestEntityTooLarge\n413 Размер файла превышен\n", http.StatusRequestEntityTooLarge)
 		return
 	}
 

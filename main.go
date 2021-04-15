@@ -101,8 +101,13 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Bad request", http.StatusBadRequest)
-	return
+	// http.Error(w, "Bad request", http.StatusBadRequest)
+	pd := PageData{
+		Title:      APP_NAME,
+		SecretLink: "",
+	}
+	tmpl, _ := template.ParseFiles("templates/index.htmlt")
+	tmpl.Execute(w, pd)
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +115,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		Title:      APP_NAME,
 		SecretLink: SECRET_LINK + "upload",
 	}
-	tmpl, _ := template.ParseFiles("templates/index.htmlt")
+	tmpl, _ := template.ParseFiles("templates/uploadindex.htmlt")
 	tmpl.Execute(w, pd)
 }
 

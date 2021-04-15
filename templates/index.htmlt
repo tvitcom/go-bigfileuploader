@@ -1,16 +1,11 @@
 <html>
 <head>
-    <title>{{ .Title }}</title>
-    <link href="/assets/css/dropzone.css" type="text/css" rel="stylesheet" />
-    <!-- <script src="/assets/js/dropzone.js"></script> -> Couse Error after 256 MB -->
+    <title>{{.Title}}</title>
+    
 </head>
 <body>
-    <h3>{{ .Title }}</h3>
-    <form action="{{ .SecretLink }}" method="POST" class="dropzone" id="my-dropzone" enctype="multipart/form-data">
-        <div class="fallback">
-            <input name="file" type="file" />
-            <input type="submit" value="Upload" />
-        </div>
-    </form>
+    <h3>Coming soon...</h3>
+    <p>
+</p>
 </body>
 </html>

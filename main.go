@@ -20,11 +20,14 @@ var (
 	SECRET_LINK      string
 	UPLOAD_DIRECTORY string
 	TMPDIR           string
+	PUBLIC_DIR       string
 )
 
 type PageData struct {
 	Title      string
 	SecretLink string
+	Files      []string
+	PubDir     string
 }
 
 func init() {
@@ -55,7 +58,7 @@ func init() {
 	SECRET_LINK = os.Getenv("SECRET_LINK")
 	// fmt.Println("INIT GET:SECRET_LINK:",SECRET_LINK)
 	if SECRET_LINK == "" {
-		SECRET_LINK = "/secretlink"
+		SECRET_LINK = "/secretu"
 	}
 
 	UPLOAD_DIRECTORY = os.Getenv("UPLOAD_DIRECTORY")
@@ -73,14 +76,17 @@ func init() {
 		// }
 		TMPDIR = "./tmp"
 	}
+	PUBLIC_DIR = os.Getenv("PUBLIC_DIR")
+	// fmt.Println("INIT GET:PUBLIC_DIR:",PUBLIC_DIR)
+	if PUBLIC_DIR == "" {
+		PUBLIC_DIR = "./assets/files"
+	}
 }
 
 func main() {
 
 	fmt.Println("Http server is start on:", "http://"+HTTP_ENDPOINT)
-	fmt.Println("TempDir os.Getenv(TMPDIR):", os.Getenv("TMPDIR"))
-	fmt.Println("TempDir os.TempDir():", os.TempDir())
-	fmt.Println("TempDir apllied TMPDIR:", TMPDIR)
+	fmt.Println("SECRET_LINK:", SECRET_LINK)
 
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 	http.HandleFunc("/", defaultHandler)
@@ -111,9 +117,29 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	FileIndex := []string{}
+	dir, err := os.Open(PUBLIC_DIR)
+	if err != nil {
+		panic(err)
+		return
+	}
+	defer dir.Close()
+
+	fileInfos, err := dir.Readdir(-1)
+	if err != nil {
+		panic(err)
+		return
+	}
+	for _, fi := range fileInfos {
+		FileIndex = append(FileIndex, fi.Name())
+	}
+	fmt.Println(FileIndex)
+
 	pd := PageData{
 		Title:      APP_NAME,
 		SecretLink: SECRET_LINK + "upload",
+		Files:      FileIndex,
+		PubDir:     PUBLIC_DIR,
 	}
 	tmpl, _ := template.ParseFiles("templates/uploadindex.htmlt")
 	tmpl.Execute(w, pd)

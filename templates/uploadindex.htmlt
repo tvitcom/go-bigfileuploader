@@ -12,5 +12,14 @@
             <input type="submit" value="Upload" />
         </div>
     </form>
+    <p>
+        <ul>
+            {{range .Files}}
+                <li>
+                    <a href="/assets/files/{{ . }}">{{ . }}</a>
+                </li>
+            {{end}}
+        </ul>
+    </p>
 </body>
 </html>

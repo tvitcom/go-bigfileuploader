@@ -1,0 +1,35 @@
+## secured files
+/*.log*
+/info
+/data
+!/data/_credentials.json
+/.env*
+/uploaded/*
+!/uploaded/index.html
+/assets/files/*
+!/assets/files/index.html
+old-*
+_old_*
+old_*
+*/_old*
+
+## common files
+!.gitignore
+/templates/__*
+/123*
+/123.go*
+
+## temporary files
+/tmp/*
+!/tmp/.keep
+*~
+*.swp
+*/*.swp
+/vendor
+
+# project files
+/*.sublime-project
+/*.sublime-workspace
+
+# compilation files
+/bigfileuploader
